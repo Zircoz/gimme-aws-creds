@@ -33,11 +33,7 @@ from requests.adapters import HTTPAdapter, Retry
 
 from gimme_aws_creds.u2f import FactorU2F
 
-# avoid importing ctap-keyring-device on Windows until it supports Python 3.10+
-if sys.platform == "win32" and sys.version_info >= (3, 10):
-    from gimme_aws_creds.dummy_webauthn import WebAuthnClient, FakeAssertion
-else:
-    from gimme_aws_creds.webauthn import WebAuthnClient, FakeAssertion
+from gimme_aws_creds.webauthn import WebAuthnClient, FakeAssertion
 
 from . import errors, ui, version, duo
 from .duo_universal import OktaDuoUniversal
@@ -631,11 +627,7 @@ class OktaClassicClient(object):
         elif factor['factorType'] == 'u2f':
             return self._login_input_webauthn_challenge(state_token, factor)
         elif factor['factorType'] == 'webauthn':
-            # Block webauthn until ctap-kering-device is updated to support Python 3.10+ on Windows
-            if sys.platform == "win32" and sys.version_info >= (3, 10):
-                raise errors.GimmeAWSCredsError("WebAuthn devices not supported on this platform", 2)
-            else:
-                return self._login_input_webauthn_challenge(state_token, factor)
+            return self._login_input_webauthn_challenge(state_token, factor)
         elif factor['factorType'] == 'token:hardware':
             return self._login_input_mfa_challenge(state_token, factor['_links']['verify']['href'])
         elif factor['factorType'] == 'claims_provider':

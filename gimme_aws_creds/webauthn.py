@@ -34,6 +34,10 @@ class FakeAssertion(object):
 
 
 class WebAuthnClient(object):
+    """
+    WebAuthn Client for Okta.
+    Supported on all platforms including Windows Python 3.10+ (via ctap-keyring-device).
+    """
     def __init__(self, ui, okta_org_url, challenge, credential_id=None, timeout_ms=30_000):
         """
         :param okta_org_url: Base URL string for Okta IDP.
